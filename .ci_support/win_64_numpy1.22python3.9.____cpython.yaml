@@ -9,13 +9,13 @@ channel_targets:
 cxx_compiler:
 - vs2019
 hdf5:
-- 1.14.4
+- 1.14.6
 libboost_devel:
 - '1.86'
 libmed:
 - '4.1'
 libxml2:
-- '2'
+- '2.13'
 mpi:
 - nompi
 mpich:

@@ -19,19 +19,19 @@ cxx_compiler_version:
 docker_image:
 - quay.io/condaforge/linux-anvil-x86_64:alma9
 hdf5:
-- 1.14.4
+- 1.14.6
 libboost_devel:
 - '1.86'
 libmed:
 - '4.1'
 libxml2:
-- '2'
+- '2.13'
 mpi:
 - nompi
 mpich:
 - '4'
 numpy:
-- '1.26'
+- '1.22'
 openmpi:
 - '4'
 pin_run_as_build:
@@ -39,7 +39,7 @@ pin_run_as_build:
     min_pin: x.x
     max_pin: x.x
 python:
-- 3.12.* *_cpython
+- 3.10.* *_cpython
 target_platform:
 - linux-64
 zip_keys:
