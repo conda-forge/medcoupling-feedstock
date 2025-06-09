@@ -28,12 +28,12 @@ requirements:
     - {{ compiler('cxx') }}
     - make                                      # [not win]
     - ninja                                     # [win]
-    - cmake<4
+    - cmake <4
     - swig >=4.0.2
 
   host:
     - python
-    - numpy<2
+    - numpy <2
     - libboost-devel
     - zlib
     - hdf5
