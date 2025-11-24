@@ -1,0 +1,81 @@
+--- a/src/MEDPartitioner/MEDPARTITIONER_PTScotchGraph.cxx
++++ b/src/MEDPartitioner/MEDPARTITIONER_PTScotchGraph.cxx
+@@ -64,6 +64,7 @@
+   throw INTERP_KERNEL::Exception("PTSCOTCHGraph::partGraph : PTSCOTCH is not available. Check your products, please.");
+ #else
+   //output parameters
++  std::unique_ptr<SCOTCH_Num[]> partition_scotch(new SCOTCH_Num[n+1]);
+   std::unique_ptr<mcIdType[]> partition(new mcIdType[n+1]);
+ #ifdef MEDCOUPLING_USE_64BIT_IDS
+   mcIdType *cellWeightPtr(nullptr);
+@@ -87,6 +88,28 @@
+
+   mcIdType *vlbloctab = _vlbloctab?const_cast<mcIdType*>(_vlbloctab->begin()):nullptr;
+
++  // Convert mcIdType arrays to SCOTCH_Num for 32-bit PTScotch compatibility
++  std::vector<SCOTCH_Num> xadj_scotch(n+1);
++  for(int i = 0; i <= n; i++)
++    xadj_scotch[i] = static_cast<SCOTCH_Num>(xadj[i]);
++
++  SCOTCH_Num edgelocnbr = xadj_scotch[n];
++  std::vector<SCOTCH_Num> adjncy_scotch(edgelocnbr);
++  for(SCOTCH_Num i = 0; i < edgelocnbr; i++)
++    adjncy_scotch[i] = static_cast<SCOTCH_Num>(adjncy[i]);
++
++  SCOTCH_Num *cellWeightPtr_scotch = nullptr;
++  std::vector<SCOTCH_Num> cellWeightVec_scotch;
++  if(cellWeightPtr) {
++    cellWeightVec_scotch.resize(n);
++    for(int i = 0; i < n; i++)
++      cellWeightVec_scotch[i] = static_cast<SCOTCH_Num>(cellWeightPtr[i]);
++    cellWeightPtr_scotch = cellWeightVec_scotch.data();
++  }
++
++  SCOTCH_Num *vlbloctab_scotch = nullptr;
++  std::vector<SCOTCH_Num> vlbloctab_scotch_vec;
++  if(vlbloctab) {
++    vlbloctab_scotch_vec.resize(n);
++    for(int i = 0; i < n; i++)
++      vlbloctab_scotch_vec[i] = static_cast<SCOTCH_Num>(vlbloctab[i]);
++    vlbloctab_scotch = vlbloctab_scotch_vec.data();
++  }
++
+   SCOTCH_randomReset();
+   SCOTCH_Dgraph scotch_graph;
+   SCOTCH_dgraphInit(&scotch_graph, MPI_COMM_WORLD);
+@@ -94,14 +117,14 @@
+                      0,             // baseval               , base first indice 0
+                      n,             // vertlocnbr            , nb of local graph nodes
+                      n,             // vertlocmax            , should be set to vertlocnbr for graphs without holes
+-                     xadj,          // vertloctab[vertnbr+1] , index vertex table
++                     xadj_scotch.data(),          // vertloctab[vertnbr+1] , index vertex table
+                      0,             // vendloctab            , index end vertex table if disjoint, set to zero
+-                     cellWeightPtr,  // veloloctab            , graph vertices loads, set to zero
+-                     vlbloctab,     // vlblocltab            , vertex label array : global vertex index
+-                     xadj[n],       // edgelocnbr            , number of edges
+-                     xadj[n],       // edgelocsiz            , same as edgelocnbr if edgeloctab is compact
+-                     adjncy,        // edgeloctab[edgelocnbr], global indexes of edges
++                     cellWeightPtr_scotch,  // veloloctab            , graph vertices loads, set to zero
++                     vlbloctab_scotch,     // vlblocltab            , vertex label array : global vertex index
++                     edgelocnbr,       // edgelocnbr            , number of edges
++                     edgelocnbr,       // edgelocsiz            , same as edgelocnbr if edgeloctab is compact
++                     adjncy_scotch.data(),        // edgeloctab[edgelocnbr], global indexes of edges
+                      0,             // edgegsttab            , optional, should be computed internally, set to zero
+-                     edgeWeightPtr); // edloloctab            , graph edges loads, set to zero
++                     nullptr); // edloloctab            , graph edges loads, set to zero (edge weights not supported with 32-bit PTScotch)
+
+   SCOTCH_Strat scotch_strategy;
+   SCOTCH_stratInit(&scotch_strategy);
+@@ -113,7 +136,11 @@
+   if (nparts>1)
+     {
+       if (MyGlobals::_Verbose>10) std::cout << "SCOTCHGraph::graphPart SCOTCH_graphPart" << std::endl;
+-      SCOTCH_dgraphPart(&scotch_graph,nparts,&scotch_strategy,partition.get());
++      SCOTCH_dgraphPart(&scotch_graph,nparts,&scotch_strategy,partition_scotch.get());
++      // Convert back from SCOTCH_Num to mcIdType
++      for (int i=0; i<n+1; i++)
++        partition[i] = static_cast<mcIdType>(partition_scotch[i]);
+     }
+   else  //partition for 1 subdomain
+     {
+
