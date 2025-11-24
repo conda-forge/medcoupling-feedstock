@@ -16,6 +16,8 @@ source:
   - url: https://github.com/SalomePlatform/configuration/archive/refs/tags/V${{ version | replace('.', '_') }}.tar.gz
     sha256: 9ff6cacfc272ef75211dee555b67acc50ec9dee1862676d429c24c13a60c6052
     target_directory: deps/config
+    patches:
+      - patches/fix_hdf5_cmake_property.patch
 
 build:
   number: ${{ build|int + 100 if mpi == "nompi" else build|int }}
