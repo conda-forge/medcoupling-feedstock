@@ -19,7 +19,7 @@ source:
 
 build:
   number: ${{ build|int + 100 if mpi == "nompi" else build|int }}
-  string: py${{ python | replace('.', '') }}_${{ mpi }}_h${{ hash }}_${{ build }}
+  string: py${{ python | version_to_buildstring }}_${{ mpi }}_h${{ hash }}_${{ build }}
   skip: osx
   prefix_detection:
     ignore_binary_files: true

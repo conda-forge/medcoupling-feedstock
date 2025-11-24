@@ -35,12 +35,3 @@ if errorlevel 1 exit 1
 
 cd %LIBRARY_LIB%
 move *.dll %LIBRARY_BIN%
-
-:: Remove test files and __pycache__ directories that shouldn't be installed
-cd %PREFIX%
-if exist "Library\bin\__pycache__" rmdir /s /q "Library\bin\__pycache__"
-if exist "%SP_DIR%\__pycache__" rmdir /s /q "%SP_DIR%\__pycache__"
-del /q "%SP_DIR%\*Test*.py" 2>nul
-del /q "%SP_DIR%\MEDLoaderCouplingTrainingSession.py" 2>nul
-del /q "%SP_DIR%\MEDCouplingDataForTest.py" 2>nul
-del /q "%SP_DIR%\MEDLoaderDataForTest.py" 2>nul
