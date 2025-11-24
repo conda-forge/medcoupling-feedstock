@@ -26,7 +26,7 @@ cmake  -B build . \
     -DMEDCOUPLING_PARTITIONER_PARMETIS=OFF \
     -DMEDCOUPLING_PARTITIONER_METIS=OFF \
     -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF \
-    -DMEDCOUPLING_PARTITIONER_PTSCOTCH=${on_mpi} \
+    -DMEDCOUPLING_PARTITIONER_PTSCOTCH=OFF \ # Disable PTScotch because petsc is not built against int64
     -DMPI_C_COMPILER:PATH="$(which mpicc)" \
     -DMPI_CXX_COMPILER:PATH="$(which mpicxx)" \
     ${CMAKE_ARGS}

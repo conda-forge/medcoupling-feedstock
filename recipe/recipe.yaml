@@ -67,8 +67,6 @@ tests:
         - MEDCouplingRemapper
         - MEDLoader
         - MEDPartitioner
-        - if: linux
-          then: MEDCoupling
         - if: win or osx
           then: MEDCouplingCompat
 
