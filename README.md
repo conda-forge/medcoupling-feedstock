@@ -3,15 +3,15 @@ About medcoupling-feedstock
 
 Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/medcoupling-feedstock/blob/main/LICENSE.txt)
 
-Home: https://git.salome-platform.org/gitweb/?p=tools/medcoupling.git
+Home: https://github.com/SalomePlatform/medcoupling
 
 Package license: LGPL-2.1-or-later
 
 Summary: The MEDCoupling tool gathers several powerful functionalities around the input and output data of simulation codes (meshes and fields mainly)
 
-Development: https://git.salome-platform.org/gitweb/?p=tools/medcoupling.git;a=summary
+Development: https://github.com/SalomePlatform/medcoupling
 
-Documentation: https://docs.salome-platform.org/latest/dev/MEDCoupling/developer/index.html
+Documentation: https://docs.salome-platform.org/latest/dev/MEDCoupling/user/html/index.html
 
 The MEDCoupling tool gathers several powerful functionalities around the input and output data of simulation codes (meshes and fields mainly)
 
