@@ -8,6 +8,7 @@ else
   on_mpi="ON"
 fi
 
+ # Disable PTScotch because petsc is not built against int64
 cmake  -B build . \
     -DCMAKE_BUILD_TYPE="Release" \
     -DPYTHON_ROOT_DIR="${PREFIX}" \
@@ -26,8 +27,9 @@ cmake  -B build . \
     -DMEDCOUPLING_PARTITIONER_PARMETIS=OFF \
     -DMEDCOUPLING_PARTITIONER_METIS=OFF \
     -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF \
-    -DMEDCOUPLING_PARTITIONER_PTSCOTCH=${on_mpi} \
+    -DMEDCOUPLING_PARTITIONER_PTSCOTCH=OFF \
     -DMPI_C_COMPILER:PATH="$(which mpicc)" \
+    -DMPI_CXX_COMPILER:PATH="$(which mpicxx)" \
     ${CMAKE_ARGS}
 
 cd build
