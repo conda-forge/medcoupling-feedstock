@@ -4,7 +4,7 @@ context:
   name: medcoupling
   mpi: ${{ mpi or "nompi" }}
   version: 9.14.0
-  build: 2
+  build: 3
   mpi_prefix: ${{ "nompi" if mpi == "nompi" else "mpi_" + mpi }}
 
 package:
@@ -34,8 +34,7 @@ requirements:
     - ${{ compiler('cxx') }}
     - if: not win
       then: make
-    - if: win
-      then: ninja
+      else: ninja
     - cmake <4
     - swig >=4.0.2
   host:
@@ -44,7 +43,7 @@ requirements:
     - libboost-devel
     - zlib
     - hdf5
-    - libxml2
+    - libxml2-devel
     - libmed * *${{ mpi }}*
     - if: mpi != 'nompi'
       then:
