@@ -13,8 +13,6 @@ package:
 source:
   - url: https://github.com/SalomePlatform/medcoupling/archive/refs/tags/V${{ version | replace('.', '_') }}.tar.gz
     sha256: d4699b564fe1a113663649b9ff1c353314509763a5aca756569e6f4de8940049
-#    patches:
-#      - patches/fix_ptscotch_32bit_int.patch
   - url: https://github.com/SalomePlatform/configuration/archive/refs/tags/V${{ version | replace('.', '_') }}.tar.gz
     sha256: 9ff6cacfc272ef75211dee555b67acc50ec9dee1862676d429c24c13a60c6052
     target_directory: deps/config
@@ -76,9 +74,9 @@ about:
   summary: The MEDCoupling tool gathers several powerful functionalities around the input and output data of simulation codes (meshes and fields mainly)
   description: |
     The MEDCoupling tool gathers several powerful functionalities around the input and output data of simulation codes (meshes and fields mainly)
-  homepage: https://git.salome-platform.org/gitweb/?p=tools/medcoupling.git
-  repository: https://git.salome-platform.org/gitweb/?p=tools/medcoupling.git;a=summary
-  documentation: https://docs.salome-platform.org/latest/dev/MEDCoupling/developer/index.html
+  homepage: https://github.com/SalomePlatform/medcoupling
+  repository: https://github.com/SalomePlatform/medcoupling
+  documentation: https://docs.salome-platform.org/latest/dev/MEDCoupling/user/html/index.html
 
 extra:
   recipe-maintainers:
