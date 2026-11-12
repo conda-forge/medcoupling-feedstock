@@ -23,6 +23,8 @@ source:
     target_directory: deps/config
     patches:
       - patches/fix_hdf5_cmake_property.patch
+      # Lets build.bat say where the Python headers are, instead of assuming <prefix>/include.
+      - patches/python_include_dir_override.patch
 
 build:
   number: ${{ build|int + 100 if mpi == "nompi" else build|int }}
