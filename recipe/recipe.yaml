@@ -4,7 +4,7 @@ context:
   name: medcoupling
   mpi: ${{ mpi or "nompi" }}
   version: 9.16.0
-  build: 1
+  build: 2
   mpi_prefix: ${{ "nompi" if mpi == "nompi" else "mpi_" + mpi }}
 
 package:
@@ -16,11 +16,15 @@ source:
     sha256: e2bc58f58252ffc215aa5bb61daf3bc3e3fd1ce6e8a7c427b8545696531542a9
     patches:
       - patches/swig_python2_api_compat.patch
+      # PyWeakref_GetObject was removed in Python 3.15; PyWeakref_GetRef where there is one.
+      - patches/python_3_15_weakref.patch
   - url: https://github.com/SalomePlatform/configuration/archive/refs/tags/V${{ version | replace('.', '_') }}.tar.gz
     sha256: c8da17e7d09a335b35a1e3c9e679576c3b0c42728a5219514271df6020c70ef6
     target_directory: deps/config
     patches:
       - patches/fix_hdf5_cmake_property.patch
+      # Lets build.bat say where the Python headers are, instead of assuming <prefix>/include.
+      - patches/python_include_dir_override.patch
 
 build:
   number: ${{ build|int + 100 if mpi == "nompi" else build|int }}
@@ -41,6 +45,9 @@ requirements:
     - swig >=4.0.2
   host:
     - python
+    # The Python shared library the bindings link against: its own package, which python itself
+    # stopped depending on with 3.15.
+    - libpython
     - numpy
     - libboost-devel
     - zlib

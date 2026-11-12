@@ -1,0 +1,52 @@
+diff -ru a/src/MEDCoupling_Swig/MEDCouplingDataArrayTraits.hxx b/src/MEDCoupling_Swig/MEDCouplingDataArrayTraits.hxx
+--- a/src/MEDCoupling_Swig/MEDCouplingDataArrayTraits.hxx	2026-11-12 02:55:57.365501543 +0100
++++ b/src/MEDCoupling_Swig/MEDCouplingDataArrayTraits.hxx	2026-11-12 02:55:57.463507562 +0100
+@@ -25,6 +25,27 @@
+ 
+ #include <Python.h>
+ 
++// PyWeakref_GetObject was removed in Python 3.15. The referent of a weak reference as a borrowed
++// reference, Py_None when it is gone: what PyWeakref_GetObject gave, through PyWeakref_GetRef
++// (Python 3.13 and later) where there is one.
++static inline PyObject *
++MEDCouplingWeakrefGetObject(PyObject *weakRef)
++{
++#if PY_VERSION_HEX >= 0x030D0000
++    PyObject *obj = NULL;
++    if (PyWeakref_GetRef(weakRef, &obj) <= 0)
++    {
++        PyErr_Clear();
++        return Py_None;
++    }
++    // The callers take a borrowed reference, as before: whoever kept the object alive still does.
++    Py_DECREF(obj);
++    return obj;
++#else
++    return PyWeakref_GetObject(weakRef);
++#endif
++}
++
+ #ifdef WITH_NUMPY
+ #include <numpy/arrayobject.h>
+ #if NPY_API_VERSION <= 0x00000006
+@@ -43,7 +64,7 @@
+ {
+     void **wronc = (void **)wron;
+     PyObject *weakRefOnOwner = reinterpret_cast<PyObject *>(wronc[0]);
+-    PyObject *obj = PyWeakref_GetObject(weakRefOnOwner);
++    PyObject *obj = MEDCouplingWeakrefGetObject(weakRefOnOwner);
+     int64_t *offset = reinterpret_cast<int64_t *>(wronc[2]);
+     if (obj != Py_None)
+     {
+diff -ru a/src/MEDCoupling_Swig/MEDCouplingDataArrayTypemaps.i b/src/MEDCoupling_Swig/MEDCouplingDataArrayTypemaps.i
+--- a/src/MEDCoupling_Swig/MEDCouplingDataArrayTypemaps.i	2026-11-12 02:55:57.366501604 +0100
++++ b/src/MEDCoupling_Swig/MEDCouplingDataArrayTypemaps.i	2026-11-12 02:55:57.464507623 +0100
+@@ -372,7 +372,7 @@
+         {// case for the second and other call of toNumPyArray
+           void **objs=(void **)mem.getParameterForDeallocator();
+           PyObject *weakRefOnOwner=(PyObject *)objs[0];
+-          PyObject *obj=PyWeakref_GetObject(weakRefOnOwner);
++          PyObject *obj=MEDCouplingWeakrefGetObject(weakRefOnOwner);
+           if(obj!=Py_None)
+             {//the previous numArray exists let numpy deals the numpy array each other by declaring the still alive instance as base
+               Py_XINCREF(obj);
